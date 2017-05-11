@@ -1,0 +1,22 @@
+<div id="columns">
+  <div class="card" *ngFor="let product of products">
+    <img class="card-img-top" src="{{product.MainImage.url_fullxfull}}">
+    <div class="card-block">
+      <h3 class="card-title">{{transform(product.title, 20)}}</h3>
+      <p class="card-text">{{transform(product.description, 100)}}</p>
+      <div class="row no-gutters">
+        <div class="col-6">
+          <a href="#" class="card-link">{{product.price}} {{product.currency_code}}</a>
+        </div>
+        <div class="col-6 text-right">
+          <a (click)="addToCart(product.listing_id)" class="card-link" uk-icon="icon: cart"></a>
+          <a (click)="addToFavourites(product.listing_id)" class="card-link" uk-icon="icon: heart"></a>
+        </div>
+      </div>
+    </div>
+    <div class="card-block">
+      <hr>
+      <p><span class="tag" *ngFor="let tag of product.tags">{{tag}}</span></p>
+    </div>
+  </div>
+</div>

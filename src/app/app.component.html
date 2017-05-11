@@ -1,3 +1,57 @@
-<h1>
-  {{title}}
-</h1>
+<nav class="navbar navbar-toggleable-md navbar-light bg-faded">
+  <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarText"
+          aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <a class="navbar-brand" routerLink="/products"><span uk-icon="icon: lock"></span> strongCommerce</a>
+  <div class="collapse navbar-collapse" id="navbarText">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item" routerLink="/products" routerLinkActive="active">
+        <a class="nav-link" href>Products</a>
+      </li>
+      <li class="nav-item" routerLink="/security" routerLinkActive="active">
+        <a class="nav-link">Security</a>
+      </li>
+    </ul>
+    <div class="navbar-text">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item active mr-4">
+          <div class="uk-inline">
+            <button class="uk-button uk-button-text" type="button"><span uk-icon="icon: cart"></span>
+            </button>
+            <div uk-dropdown="mode: hover">
+              <ul class="uk-nav uk-dropdown-nav">
+                <!--<li class="uk-nav-header">Cart</li>-->
+                <!--<div *ngIf="!isCartEmpty()">-->
+                <!--<li class="cart-product" *ngFor="let product of cart">-->
+                <!--<a href class="uk-text-truncate">{{product.title}} <span-->
+                <!--class="badge badge-pill badge-default">1</span></a></li>-->
+                <!--<li class="uk-nav-divider"></li>-->
+                <!--<li>-->
+                <!--<button class="uk-button uk-button-text" type="button">Checkout <span uk-icon="icon: check"></span>-->
+                <!--</button>-->
+                <!--</li>-->
+                <!--</div>-->
+                <!--<li *ngIf="isCartEmpty()">Empty cart</li>-->
+              </ul>
+            </div>
+          </div>
+        </li>
+        <li class="nav-item mr-4">
+          <a class="uk-button uk-button-text" *ngIf="!authService.authenticated" (click)="authService.login()">
+            <span uk-icon="icon: sign-in"></span>
+          </a>
+          <a class="uk-button uk-button-text" *ngIf="authService.authenticated" (click)=authService.logout()>
+            <span uk-icon="icon: sign-out"></span>
+          </a>
+        </li>
+        <li class="nav-item" routerLink="/profile" *ngIf="authService.authenticated" routerLinkActive="active">
+          <span uk-icon="icon: user"></span>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+<div class="container-fluid">
+  <router-outlet></router-outlet>
+</div>
