@@ -1,38 +1,137 @@
-<div uk-alert class="mt-4">
-  <h3>Welcome</h3>
-  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna
-    aliqua.</p>
-</div>
-{{user | json}}
-<button (click)="updateUser()">Button</button>
-<div class="row">
-  <div class="col-4">
-    <dl class="uk-description-list">
-      <dt>Description term</dt>
-      <dd>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</dd>
-      <dt>Description term</dt>
-      <dd>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</dd>
-      <dt>Description term</dt>
-      <dd>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</dd>
-    </dl>
+<div *ngIf="user">
+  <div uk-alert id="welcome">
+    <h3>Welcome {{user.nickname}}</h3>
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
+      magna
+      aliqua.</p>
   </div>
-  <div class="col-8">
-    <h1 class="uk-heading-line"><span>Your cart</span></h1>
-    <table class="uk-table uk-table-small uk-table-divider">
-      <thead>
-      <tr>
-        <th>Title</th>
-        <th>Quantity</th>
-        <th>Price</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr>
-        <td>Table Data</td>
-        <td>Table Data</td>
-        <td>Table Data</td>
-      </tr>
-      </tbody>
-    </table>
+  <div class="row">
+    <div class="col-4">
+      <div>
+        <div class="uk-dark uk-background-muted uk-padding">
+          <h3 class="uk-heading-line"><span>Your cart</span></h3>
+          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+            dolore magna aliqua.</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-4">
+      <div>
+        <div class="uk-dark uk-background-muted uk-padding">
+          <h3 class="uk-heading-line"><span>Favourites</span></h3>
+          <table class="uk-table uk-table-small uk-table-divider">
+            <thead>
+            <tr>
+              <th>title</th>
+              <th>views</th>
+              <th>when_made</th>
+              <th>price</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let item of fav">
+              <td>{{item.title}}</td>
+              <td>{{item.views}}</td>
+              <td>{{item.when_made}}</td>
+              <td>{{item.price}}</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="col-4">
+      <div>
+        <div class="uk-dark uk-background-muted uk-padding">
+          <h3 class="uk-heading-line"><span>Cart</span></h3>
+          <table class="uk-table uk-table-small uk-table-divider">
+            <thead>
+            <tr>
+              <th>title</th>
+              <th>views</th>
+              <th>when_made</th>
+              <th>price</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let item of cart">
+              <td>{{item.title}}</td>
+              <td>{{item.views}}</td>
+              <td>{{item.when_made}}</td>
+              <td>{{item.quantity}}</td>
+              <td>{{item.price}} {{item.currency_code}}</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
   </div>
+  <div class="row">
+    <div class="col-12" id="logs">
+      <div *ngIf="logs">
+        <div class="uk-light uk-background-secondary uk-padding">
+          <h3 class="uk-heading-line"><span>Logs</span></h3>
+          <table class="uk-table uk-table-small uk-table-divider">
+            <thead>
+            <tr>
+              <th>connection</th>
+              <th>connection_id</th>
+              <th>date</th>
+              <th>ip</th>
+              <th>country_name</th>
+            </tr>
+            </thead>
+            <tbody *ngFor="let log of logs; let i=index">
+            <tr *ngIf="i < 10">
+              <td>{{log.connection}}</td>
+              <td>{{log.connection_id}}</td>
+              <td>{{parseDateFromNow(log.date)}}</td>
+              <td>{{log.ip}}</td>
+              <td>{{log.location_info.country_name}}</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <p *ngIf="!logs">Loading logs...</p>
+    </div>
+  </div>
+  <!--<div class="row">-->
+  <!--<div class="col-4">-->
+  <!--<dl class="uk-description-list">-->
+  <!--<dt>Description term</dt>-->
+  <!--<dd>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</dd>-->
+  <!--<dt>Description term</dt>-->
+  <!--<dd>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore-->
+  <!--magna aliqua.-->
+  <!--</dd>-->
+  <!--<dt>Description term</dt>-->
+  <!--<dd>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore-->
+  <!--magna aliqua.-->
+  <!--</dd>-->
+  <!--</dl>-->
+  <!--</div>-->
+  <!--<div class="col-8">-->
+  <!--<h1 class="uk-heading-line"><span>Your cart</span></h1>-->
+  <!--<table class="uk-table uk-table-small uk-table-divider">-->
+  <!--<thead>-->
+  <!--<tr>-->
+  <!--<th>Title</th>-->
+  <!--<th>Quantity</th>-->
+  <!--<th>Price</th>-->
+  <!--</tr>-->
+  <!--</thead>-->
+  <!--<tbody>-->
+  <!--<tr>-->
+  <!--<td>Table Data</td>-->
+  <!--<td>Table Data</td>-->
+  <!--<td>Table Data</td>-->
+  <!--</tr>-->
+  <!--</tbody>-->
+  <!--</table>-->
+  <!--</div>-->
+  <!--</div>-->
+
 </div>
+<p *ngIf="!user">Loading user info...</p>

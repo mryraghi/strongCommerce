@@ -1,4 +1,4 @@
-import {ProductsService} from '../services/products.service';
+import * as _ from "lodash";
 
 export class Product {
   listing_id: number;
@@ -10,20 +10,12 @@ export class Product {
   price: string;
   currency_code: string;
   quantity: number;
+  views: number;
+  when_made: string;
   tags: string[];
-  MainImage: {
-    listing_id: number;
-    url_75x75: string;
-    url_170x135: string;
-    url_570xN: string;
-    url_fullxfull: string;
-  };
+  MainImage: object;
 
-  constructor(private id: number, private productsService: ProductsService) {
-    this.productsService.getOneProduct(id).then(product => this.fillFields(product.results[0]));
-  }
-
-  private fillFields(product: Product) {
+  constructor(product: Product) {
     this.listing_id = product.listing_id;
     this.state = product.state;
     this.user_id = product.user_id;
@@ -33,7 +25,9 @@ export class Product {
     this.price = product.price;
     this.currency_code = product.currency_code;
     this.quantity = product.quantity;
+    this.views = product.views;
+    this.when_made = product.when_made;
     this.tags = product.tags;
-    this.MainImage = product.MainImage;
+    this.MainImage = _.omitBy(product.MainImage, _.isNull);
   }
 }

@@ -1,0 +1,11 @@
+app-profile {
+  div[class^="col-"], div[class*="col-"] {
+    padding: 0;
+  }
+
+  div.uk-alert#welcome {
+    margin: 0;
+  }
+}
+
+

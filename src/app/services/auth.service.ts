@@ -1,13 +1,15 @@
-import {Injectable} from '@angular/core';
-import {tokenNotExpired} from 'angular2-jwt';
-import {NavigationStart, Router} from '@angular/router';
-import {BehaviorSubject} from 'rxjs/BehaviorSubject';
-import 'rxjs/add/operator/filter';
+import {Injectable} from "@angular/core";
+import {tokenNotExpired} from "angular2-jwt";
+import {Router} from "@angular/router";
+import {BehaviorSubject} from "rxjs/BehaviorSubject";
+import "rxjs/add/operator/filter";
+import {default as swal} from "sweetalert2";
 
-import {AUTH_CONFIG} from '../services/auth0-variables';
+import {AUTH_CONFIG} from "../services/auth0-variables";
 
 // Avoid name not found warnings
 declare const auth0: any;
+declare const auth0Manage: any;
 
 @Injectable()
 export class AuthService {
@@ -54,13 +56,17 @@ export class AuthService {
         this.router.navigate(['/profile']);
       } else if (err) {
         this.router.navigate(['/']);
-        console.error(`Error: ${err.error}`);
+        swal({
+          title: 'Error!',
+          text: err.error,
+          type: 'error',
+          confirmButtonText: 'Ok'
+        });
       }
     });
   }
 
   private _getProfile(authResult) {
-    console.log(authResult);
     // Use access token to retrieve user's profile and set session
     this.auth0.client.userInfo(authResult.accessToken, (err, profile) => {
       this._setSession(authResult, profile);

@@ -9,7 +9,7 @@
     background: #fefefe;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
     margin: 0 2px 15px;
-    padding: 15px 15px 10px;
+    padding: 0;
     transition: opacity .2s ease-in-out;
     display: inline-block;
     column-break-inside: avoid;
@@ -18,8 +18,40 @@
       width: 100%;
       height: auto;
       border-bottom: 1px solid #ccc;
-      padding-bottom: 15px;
-      margin-bottom: 5px;
+    }
+
+    hr {
+      margin: 0;
+    }
+
+    div.card-block p {
+      margin: 0;
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      align-content: center;
+      text-align: center;
+
+      span.tag {
+        font-size: 9.6px;
+        background-color: #ffdb00;
+        text-transform: uppercase;
+        padding: 7px 10px 5px;
+        text-decoration: none;
+        display: inline-block;
+        border: none;
+        letter-spacing: .1em;
+        font-family: 'Proxima Nova', sans-serif;
+        font-weight: bold;
+        flex: 1 1 auto;
+        margin: 5px;
+
+        &:hover {
+          color: #ffdb00;
+          background-color: black;
+          cursor: pointer;
+        }
+      }
     }
   }
 
@@ -31,25 +63,6 @@
 
 .cart-product {
   width: 150px;
-}
-
-.tag {
-  font-size: 9.6px;
-  background-color: #ffdb00;
-  text-transform: uppercase;
-  padding: 7px 10px 5px;
-  text-decoration: none;
-  display: inline-block;
-  border: none;
-  margin: 1.35em 3px 0;
-  letter-spacing: .1em;
-  font-family: 'Proxima Nova', sans-serif;
-  font-weight: bold;
-
-  &:hover {
-    color: #ffdb00;
-    background-color: black;
-  }
 }
 
 div#columns:hover div.card:not(:hover) {
