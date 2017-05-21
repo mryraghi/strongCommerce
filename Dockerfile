@@ -1,4 +1,4 @@
-ENTRYPOINT ["node"]
+FROM debian:jessie
 
 RUN sudo npm install angular-cli -g
 WORKDIR /app
