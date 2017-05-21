@@ -1,11 +1,13 @@
 FROM node:6.9.4
 WORKDIR /app
-CMD curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.2/install.sh | bash
-CMD nvm install stable
-RUN ng build --prod
+RUN curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.2/install.sh | bash
+RUN nvm install stable
 RUN node --version
 RUN npm --version
 RUN npm install
-CMD npm install -g angular-cli
+RUN npm install -g angular-cli
+RUN npm link angular-cli
+RUN ng --version
+RUN ng build --prod
 EXPOSE 3000
 CMD [ "npm", "start" ]
