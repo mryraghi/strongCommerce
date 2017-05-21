@@ -10,6 +10,8 @@ const jwt = require('express-jwt');
 const jwks = require('jwks-rsa');
 const cors = require('cors');
 
+const fs = require('fs');
+
 // Get our API routes
 const api = require('../server/routes/api');
 
@@ -45,6 +47,14 @@ app.use('/api', api);
 // Catch all other routes and return the index file
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../dist/index.html'));
+});
+
+fs.readdir(__dirname, function (err, items) {
+  console.log(items);
+
+  for (let i = 0; i < items.length; i++) {
+    console.log(items[i]);
+  }
 });
 
 /**
