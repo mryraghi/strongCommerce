@@ -1,0 +1,8 @@
+{
+  "scripts": {
+    "dokku": {
+      "predeploy": "ng build",
+      "postdeploy": "ng build"
+    }
+  }
+}
