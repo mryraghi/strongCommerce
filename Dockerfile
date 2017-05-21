@@ -1,7 +1,5 @@
 FROM node:6.9.4
-WORKDIR /app
-RUN curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.2/install.sh | bash
-RUN nvm install stable
+WORKDIR /apps
 RUN node --version
 RUN npm --version
 RUN npm install
