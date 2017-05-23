@@ -26,6 +26,9 @@ export class ProfileComponent implements OnInit {
   fav: Product[];
 
   constructor(private apiService: APIService) {
+  }
+
+  ngOnInit() {
     this.apiService.getUser().then((user: User) => {
       this.cart = user.user_metadata.cart;
       this.fav = user.user_metadata.fav;
@@ -36,10 +39,19 @@ export class ProfileComponent implements OnInit {
       delete user.user_metadata.fav;
       this.user = user;
     });
+
     this.apiService.getLogs().then((logs: any) => this.logs = logs);
   }
 
-  ngOnInit() {
+  removeItem(type: 'cart' | 'fav', listing_id: number) {
+    const product: Product = new Product(listing_id);
+
+    this.apiService.updateUserMetadata(type, 'remove', product).then(
+      (user: User) => {
+        this.fav = user.user_metadata.fav;
+        this.cart = user.user_metadata.cart;
+      }
+    );
   }
 
   parseDate(date: Date) {
@@ -48,6 +60,10 @@ export class ProfileComponent implements OnInit {
 
   parseDateFromNow(date: Date) {
     return moment(date).fromNow();
+  }
+
+  newArray(number: number) {
+    return Array(number).fill(1);
   }
 
 }

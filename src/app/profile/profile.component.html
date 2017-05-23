@@ -1,92 +1,114 @@
 <div *ngIf="user" style="background-color: #f8f8f8;">
-  <div uk-alert id="welcome">
+  <div class="uk-light uk-background-secondary uk-padding">
     <h3 class="uk-heading-line"><span>Welcome {{user.nickname}}</span></h3>
-    <p>Here's your profile!</p>
-  </div>
-  <div class="row">
-    <div class="col-6">
-      <div>
-        <div class="uk-dark uk-background-muted uk-padding">
-          <h3 class="uk-heading-line"><span>Favourites</span></h3>
-          <table class="uk-table uk-table-small uk-table-divider">
-            <thead>
-            <tr>
-              <th>title</th>
-              <th>views</th>
-              <th>when_made</th>
-              <th>price</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr *ngFor="let item of fav">
-              <td>{{item.title}}</td>
-              <td>{{item.views}}</td>
-              <td>{{item.when_made}}</td>
-              <td>{{item.price}}</td>
-            </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
+    <div class="row">
+      <div class="col-6"></div>
+      <div class="col-6"></div>
     </div>
-    <div class="col-6">
-      <div>
-        <div class="uk-dark uk-background-muted uk-padding">
-          <h3 class="uk-heading-line"><span>Cart</span></h3>
-          <table class="uk-table uk-table-small uk-table-divider">
-            <thead>
-            <tr>
-              <th>title</th>
-              <th>views</th>
-              <th>when_made</th>
-              <th>price</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr *ngFor="let item of cart">
-              <td>{{item.title}}</td>
-              <td>{{item.views}}</td>
-              <td>{{item.when_made}}</td>
-              <td>{{item.quantity}}</td>
-              <td>{{item.price}} {{item.currency_code}}</td>
-            </tr>
-            </tbody>
-          </table>
-          <button class="uk-button uk-button-default uk-button-small" href="#modal-checkout" uk-toggle>
-            <span uk-icon="icon: credit-card"></span> Checkout
-          </button>
+  </div>
+  <div class="uk-dark uk-background-muted uk-padding">
+    <ul class="uk-subnav uk-subnav-pill" uk-switcher="animation: uk-animation-fade">
+      <li><a href="#">Favourites</a></li>
+      <li><a href="#">Cart</a></li>
+    </ul>
 
-          <div id="modal-checkout" uk-modal="center: true">
-            <div class="uk-modal-dialog">
-              <button class="uk-modal-close-default" type="button" uk-close></button>
-              <div class="uk-modal-header">
-                <h2 class="uk-modal-title">Checkout</h2>
+    <ul class="uk-switcher uk-margin">
+      <li>
+
+        <h3 class="uk-heading-line"><span>Favourites</span></h3>
+        <table class="uk-table uk-table-small uk-table-divider profile-tables" *ngIf="fav.length != 0">
+          <thead>
+          <tr>
+            <th>title</th>
+            <th>views</th>
+            <th>when_made</th>
+            <th>price</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let item of fav">
+            <td>{{item.title}}</td>
+            <td>{{item.views}}</td>
+            <td>{{item.when_made}}</td>
+            <td>{{item.price}}</td>
+          </tr>
+          </tbody>
+        </table>
+        <p *ngIf="fav.length == 0">No favourites</p>
+      </li>
+      <li>
+        <h3 class="uk-heading-line"><span>Cart</span></h3>
+        <table class="uk-table uk-table-middle uk-table-small uk-table-divider profile-tables" *ngIf="cart.length != 0">
+          <thead>
+          <tr>
+            <th>picture</th>
+            <th>title</th>
+            <th>views</th>
+            <th>when_made</th>
+            <th>quantity</th>
+            <th>price</th>
+            <th></th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let item of cart">
+            <td class="uk-table-shrink"><img style="border-radius: 50%" src="{{item.MainImage.url_75x75}}" width="35"
+                                             height="35"></td>
+            <td class="uk-table-expand">{{item.title}}</td>
+            <td class="uk-table-shrink">{{item.views}}</td>
+            <td class="uk-table-shrink">{{item.when_made}}</td>
+            <td class="uk-table-shrink">
+              <div class="uk-margin">
+                <select class="uk-select uk-form-small">
+                  <option *ngFor="let n of newArray(item.quantity); let i=index">{{i + 1}}</option>
+                </select>
               </div>
-              <div class="uk-modal-body">
-                <form class="uk-grid-small" uk-grid>
-                  <div class="uk-width-1-1">
-                    <input class="uk-input" type="text" placeholder="Full name">
-                  </div>
-                  <div class="uk-width-1-1">
-                    <input class="uk-input" type="number" placeholder="Card number">
-                  </div>
-                  <div class="uk-width-1-2@s">
-                    <input class="uk-input" type="date" placeholder="Expiration date">
-                  </div>
-                  <div class="uk-width-1-2@s">
-                    <input class="uk-input" type="number" placeholder="CVV">
-                  </div>
-                </form>
-              </div>
-              <div class="uk-modal-footer uk-text-right">
-                <button class="uk-button uk-button-default uk-modal-close" type="button">Cancel</button>
-                <button class="uk-button uk-button-primary" type="button">Save</button>
-              </div>
+            </td>
+            <td class="uk-table-shrink">{{item.price}} {{item.currency_code === 'USD'? '$' : '€'}}</td>
+            <td class="uk-table-shrink">
+              <a uk-icon="icon: close" class="card-link" (click)="removeItem('cart', item.listing_id)"
+                 title="Delete item" uk-tooltip></a>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+        <button class="uk-button uk-button-default uk-button-small uk-float-right" href="#modal-checkout" uk-toggle
+                *ngIf="cart.length != 0">
+          <span uk-icon="icon: credit-card"></span> Checkout
+        </button>
+
+        <p *ngIf="cart.length == 0">No items</p>
+
+        <div id="modal-checkout" uk-modal="center: true">
+          <div class="uk-modal-dialog">
+            <button class="uk-modal-close-default" type="button" uk-close></button>
+            <div class="uk-modal-header">
+              <h2 class="uk-modal-title">Checkout</h2>
+            </div>
+            <div class="uk-modal-body">
+              <form class="uk-grid-small" uk-grid>
+                <div class="uk-width-1-1">
+                  <input class="uk-input" type="text" placeholder="Full name">
+                </div>
+                <div class="uk-width-1-1">
+                  <input class="uk-input" type="number" placeholder="Card number">
+                </div>
+                <div class="uk-width-1-2@s">
+                  <input class="uk-input" type="date" placeholder="Expiration date">
+                </div>
+                <div class="uk-width-1-2@s">
+                  <input class="uk-input" type="number" placeholder="CVV">
+                </div>
+              </form>
+            </div>
+            <div class="uk-modal-footer uk-text-right">
+              <button class="uk-button uk-button-default uk-modal-close" type="button">Cancel</button>
+              <button class="uk-button uk-button-primary" type="button">Save</button>
             </div>
           </div>
         </div>
-      </div>
-    </div>
+      </li>
+    </ul>
   </div>
   <div class="row">
     <div class="col-12" id="logs">

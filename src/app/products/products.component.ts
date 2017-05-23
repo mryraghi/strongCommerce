@@ -35,9 +35,10 @@ export class ProductsComponent implements OnInit {
 
       this.apiService.getOneProduct(listing_id)
         .then(newProduct => {
-          const product: Product = new Product(newProduct.results[0]);
+          const product: Product = new Product();
+          product.copyProduct(newProduct.results[0]);
 
-          this.apiService.addToUserMetadata(type, product).then(
+          this.apiService.updateUserMetadata(type, 'add', product).then(
             (user: User) => {
               this.fav = user.user_metadata.fav;
               this.cart = user.user_metadata.cart;

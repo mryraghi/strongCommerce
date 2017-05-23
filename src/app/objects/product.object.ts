@@ -15,7 +15,11 @@ export class Product {
   tags: string[];
   MainImage: object;
 
-  constructor(product: Product) {
+  constructor(listing_id?: number) {
+    this.listing_id = listing_id;
+  }
+
+  copyProduct(product: Product) {
     this.listing_id = product.listing_id;
     this.state = product.state;
     this.user_id = product.user_id;

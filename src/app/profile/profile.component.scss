@@ -1,7 +1,23 @@
+div.row {
+  padding: 0;
+  margin: 0;
+}
+
 div[class^="col-"], div[class*="col-"] {
   padding: 0;
+  margin: 0;
 }
 
 div.uk-alert#welcome {
   margin: 0;
+  padding: 0;
+}
+
+.profile-tables {
+  td {
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }

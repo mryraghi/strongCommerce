@@ -59,11 +59,23 @@ export class APIService {
       .catch(APIService.handleError);
   }
 
-  addToUserMetadata(type: 'cart' | 'fav', product: Product) {
-    if (_.isEqual(type, 'cart')) {
-      this.cart.push(product);
-    } else {
-      this.fav.push(product);
+  updateUserMetadata(type: 'cart' | 'fav', action: 'add' | 'remove', product: Product) {
+
+    console.log(this[type]);
+
+    switch (action) {
+      case 'add':
+        this[type].push(product);
+        break;
+
+      case 'remove':
+        _.remove(this[type], (item: Product) => {
+          return _.isEqual(item.listing_id, product.listing_id);
+        });
+        break;
+
+      default:
+        break;
     }
 
     const headers: Headers = new Headers();
