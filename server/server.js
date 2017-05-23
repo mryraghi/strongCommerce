@@ -9,6 +9,7 @@ const helmet = require('helmet');
 const jwt = require('express-jwt');
 const jwks = require('jwks-rsa');
 const cors = require('cors');
+const csrf = require('csurf');
 
 const fs = require('fs');
 
@@ -17,10 +18,13 @@ const api = require('../server/routes/api');
 
 const app = express();
 
+let csrfProtection = csrf({cookie: true});
+
 app.use(helmet());
 
 // Parsers for POST data
 app.use(bodyParser.json());
+
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cors());
 
@@ -42,11 +46,11 @@ let jwtCheck = jwt({
 app.use(express.static(path.join(__dirname, '../dist')));
 
 // Set our api routes
-app.use('/api', api);
+app.use('/api', api, csrf);
 
 // Catch all other routes and return the index file
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../dist/index.html'));
+app.get('*', csrf, (req, res) => {
+  res.sendFile(path.join(__dirname, '../dist/index.html'), {csrfToken: req.csrfToken()});
 });
 
 /**

@@ -61,7 +61,7 @@ export class APIService {
 
   updateUserMetadata(type: 'cart' | 'fav', action: 'add' | 'remove', product: Product) {
 
-    console.log(this[type]);
+    console.log(this[type].push(product));
 
     switch (action) {
       case 'add':
@@ -96,7 +96,13 @@ export class APIService {
       headers: headers,
       search: params
     }).toPromise()
-      .then(response => response.json())
+      .then(response => {
+        const updatedUser: User = response.json();
+        this.fav = user.user_metadata.fav;
+        this.cart = user.user_metadata.cart;
+
+        return updatedUser;
+      })
       .catch(APIService.handleError);
   }
 

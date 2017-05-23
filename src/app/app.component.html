@@ -21,18 +21,16 @@
             </button>
             <div uk-dropdown="mode: hover">
               <ul class="uk-nav uk-dropdown-nav">
-                <!--<li class="uk-nav-header">Cart</li>-->
-                <!--<div *ngIf="!isCartEmpty()">-->
-                <!--<li class="cart-product" *ngFor="let product of cart">-->
-                <!--<a href class="uk-text-truncate">{{product.title}} <span-->
-                <!--class="badge badge-pill badge-default">1</span></a></li>-->
-                <!--<li class="uk-nav-divider"></li>-->
-                <!--<li>-->
-                <!--<button class="uk-button uk-button-text" type="button">Checkout <span uk-icon="icon: check"></span>-->
-                <!--</button>-->
-                <!--</li>-->
-                <!--</div>-->
-                <!--<li *ngIf="isCartEmpty()">Empty cart</li>-->
+                <li class="uk-nav-header">Cart</li>
+                <div *ngIf="!isCartEmpty() && authService.authenticated">
+                  <li class="cart-product" *ngFor="let product of cart">
+                    <a href class="uk-text-truncate" style="max-width: 300px;">{{product.title}}</a></li>
+                  <li class="uk-nav-divider"></li>
+                  <li>
+                    <a class="uk-button uk-button-default uk-button-small uk-float-right" type="button" href="/profile">Checkout </a>
+                  </li>
+                </div>
+                <li class="cart-product" *ngIf="isCartEmpty() && authService.authenticated">Empty cart</li>
               </ul>
             </div>
           </div>
