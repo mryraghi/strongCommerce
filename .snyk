@@ -1,8 +1,23 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
 version: v1.7.0
-ignore: {}
+# ignores vulnerabilities until expiry date; change duration by modifying expiry date
+ignore:
+  'npm:handlebars:20151207':
+    - '@angular/cli > postcss-url > directory-encoder > handlebars':
+        reason: None given
+        expires: '2017-06-22T17:49:58.615Z'
 # patches apply the minimum changes required to fix a vulnerability
 patch:
   'npm:uglify-js:20150824':
     - '@angular/cli > postcss-url > directory-encoder > handlebars > uglify-js':
         patched: '2017-05-23T11:31:24.129Z'
+  'npm:ms:20170412':
+    - jwks-rsa > ms:
+        patched: '2017-05-23T17:49:58.716Z'
+    - '@angular/cli > webpack-dev-server > compression > debug > ms':
+        patched: '2017-05-23T17:49:58.716Z'
+    - '@angular/cli > webpack-dev-server > serve-index > debug > ms':
+        patched: '2017-05-23T17:49:58.716Z'
+  'npm:uglify-js:20151024':
+    - '@angular/cli > postcss-url > directory-encoder > handlebars > uglify-js':
+        patched: '2017-05-23T17:49:58.716Z'
