@@ -32,9 +32,6 @@ export class ProfileComponent implements OnInit {
     this.apiService.getUser().then((user: User) => {
       this.cart = user.user_metadata.cart;
       this.fav = user.user_metadata.fav;
-
-      console.log(this.cart, this.fav);
-
       delete user.user_metadata.cart;
       delete user.user_metadata.fav;
       this.user = user;

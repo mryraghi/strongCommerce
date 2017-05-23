@@ -1,11 +1,11 @@
-import {ModuleWithProviders} from "@angular/core";
-import {RouterModule, Routes} from "@angular/router";
+import {ModuleWithProviders} from '@angular/core';
+import {Routes, RouterModule} from '@angular/router';
 
-import {ProductsComponent} from "./products/products.component";
-import {ProfileComponent} from "./profile/profile.component";
-import {CallbackComponent} from "./callback/callback.component";
-import {SecurityComponent} from "./security/security.component";
-import {AuthGuard} from "./services/auth-guard.service";
+import {ProductsComponent} from './products/products.component';
+import {ProfileComponent} from './profile/profile.component';
+import {CallbackComponent} from './callback/callback.component';
+import {SecurityComponent} from './security/security.component';
+import {AuthGuard} from './services/auth-guard.service';
 
 const appRoutes: Routes = [
   // {

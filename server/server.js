@@ -9,7 +9,6 @@ const helmet = require('helmet');
 const jwt = require('express-jwt');
 const jwks = require('jwks-rsa');
 const cors = require('cors');
-const csrf = require('csurf');
 
 const fs = require('fs');
 
@@ -17,8 +16,6 @@ const fs = require('fs');
 const api = require('../server/routes/api');
 
 const app = express();
-
-let csrfProtection = csrf({cookie: true});
 
 app.use(helmet());
 
@@ -46,11 +43,11 @@ let jwtCheck = jwt({
 app.use(express.static(path.join(__dirname, '../dist')));
 
 // Set our api routes
-app.use('/api', api, csrf);
+app.use('/api', api);
 
 // Catch all other routes and return the index file
-app.get('*', csrf, (req, res) => {
-  res.sendFile(path.join(__dirname, '../dist/index.html'), {csrfToken: req.csrfToken()});
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../dist/index.html'));
 });
 
 /**

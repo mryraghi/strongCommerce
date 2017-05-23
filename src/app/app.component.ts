@@ -19,14 +19,14 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     console.log(localStorage.getItem('profile'));
 
-    if (!_.isNull(localStorage.getItem('profile'))) {
-      this.apiService.getUser().then((user: User) => {
-        this.cart = user.user_metadata.cart;
-      });
-    }
+    setInterval(() => {
+      this.cart = this.apiService.getLocalUser();
+    }, 500);
   }
 
   isCartEmpty(): boolean {
     return (_.isUndefined(this.cart) ? true : _.isEmpty(this.cart));
   }
+
+
 }

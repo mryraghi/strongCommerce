@@ -23,6 +23,11 @@ export class APIService {
 
   constructor(private http: Http) {
     this.getToken();
+
+    this.getUser().then((user: User) => {
+      this.cart = user.user_metadata.cart;
+      this.fav = user.user_metadata.fav;
+    });
   }
 
   private getToken() {
@@ -61,11 +66,17 @@ export class APIService {
 
   updateUserMetadata(type: 'cart' | 'fav', action: 'add' | 'remove', product: Product) {
 
-    console.log(this[type].push(product));
-
     switch (action) {
       case 'add':
-        this[type].push(product);
+        let found = false;
+        _.forEach(this[type], (item) => {
+          if (_.isEqual(item.listing_id, product.listing_id)) {
+            found = true;
+          }
+        });
+        if (!found) {
+          this[type].push(product);
+        }
         break;
 
       case 'remove':
@@ -98,8 +109,9 @@ export class APIService {
     }).toPromise()
       .then(response => {
         const updatedUser: User = response.json();
-        this.fav = user.user_metadata.fav;
-        this.cart = user.user_metadata.cart;
+
+        this.fav = (_.has(updatedUser.user_metadata, 'fav') ? updatedUser.user_metadata.fav : []);
+        this.cart = (_.has(updatedUser.user_metadata, 'cart') ? updatedUser.user_metadata.cart : []);
 
         return updatedUser;
       })
@@ -138,5 +150,9 @@ export class APIService {
       .toPromise()
       .then(response => response.json() as Product)
       .catch(APIService.handleError);
+  }
+
+  getLocalUser() {
+    return this.cart || [];
   }
 }
