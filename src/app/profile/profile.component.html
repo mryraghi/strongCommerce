@@ -1,21 +1,10 @@
-<div *ngIf="user">
+<div *ngIf="user" style="background-color: #f8f8f8;">
   <div uk-alert id="welcome">
-    <h3>Welcome {{user.nickname}}</h3>
-    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
-      magna
-      aliqua.</p>
+    <h3 class="uk-heading-line"><span>Welcome {{user.nickname}}</span></h3>
+    <p>Here's your profile!</p>
   </div>
   <div class="row">
-    <div class="col-4">
-      <div>
-        <div class="uk-dark uk-background-muted uk-padding">
-          <h3 class="uk-heading-line"><span>Your cart</span></h3>
-          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
-            dolore magna aliqua.</p>
-        </div>
-      </div>
-    </div>
-    <div class="col-4">
+    <div class="col-6">
       <div>
         <div class="uk-dark uk-background-muted uk-padding">
           <h3 class="uk-heading-line"><span>Favourites</span></h3>
@@ -40,7 +29,7 @@
         </div>
       </div>
     </div>
-    <div class="col-4">
+    <div class="col-6">
       <div>
         <div class="uk-dark uk-background-muted uk-padding">
           <h3 class="uk-heading-line"><span>Cart</span></h3>
@@ -63,6 +52,38 @@
             </tr>
             </tbody>
           </table>
+          <button class="uk-button uk-button-default uk-button-small" href="#modal-checkout" uk-toggle>
+            <span uk-icon="icon: credit-card"></span> Checkout
+          </button>
+
+          <div id="modal-checkout" uk-modal="center: true">
+            <div class="uk-modal-dialog">
+              <button class="uk-modal-close-default" type="button" uk-close></button>
+              <div class="uk-modal-header">
+                <h2 class="uk-modal-title">Checkout</h2>
+              </div>
+              <div class="uk-modal-body">
+                <form class="uk-grid-small" uk-grid>
+                  <div class="uk-width-1-1">
+                    <input class="uk-input" type="text" placeholder="Full name">
+                  </div>
+                  <div class="uk-width-1-1">
+                    <input class="uk-input" type="number" placeholder="Card number">
+                  </div>
+                  <div class="uk-width-1-2@s">
+                    <input class="uk-input" type="date" placeholder="Expiration date">
+                  </div>
+                  <div class="uk-width-1-2@s">
+                    <input class="uk-input" type="number" placeholder="CVV">
+                  </div>
+                </form>
+              </div>
+              <div class="uk-modal-footer uk-text-right">
+                <button class="uk-button uk-button-default uk-modal-close" type="button">Cancel</button>
+                <button class="uk-button uk-button-primary" type="button">Save</button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
