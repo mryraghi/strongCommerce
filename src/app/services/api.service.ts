@@ -24,10 +24,12 @@ export class APIService {
   constructor(private http: Http) {
     this.getToken();
 
-    this.getUser().then((user: User) => {
-      this.cart = user.user_metadata.cart;
-      this.fav = user.user_metadata.fav;
-    });
+    if (!_.isNull(localStorage.getItem('profile'))) {
+      this.getUser().then((user: User) => {
+        this.cart = user.user_metadata.cart;
+        this.fav = user.user_metadata.fav;
+      });
+    }
   }
 
   private getToken() {
