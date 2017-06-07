@@ -76,5 +76,8 @@
     "typescript": "~2.0.3",
     "typings": "^2.1.1"
   },
+  "engines": {
+    "node": "6.10.3"
+  },
   "snyk": true
 }
