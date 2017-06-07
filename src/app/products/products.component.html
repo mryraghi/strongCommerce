@@ -1,4 +1,4 @@
-<div id="columns">
+<div id="columns" *ngIf="!error">
   <div class="card" *ngFor="let product of products">
     <img class="card-img-top" src="{{product.MainImage.url_fullxfull}}">
     <div class="card-block">
@@ -6,7 +6,9 @@
       <p class="card-text">{{transform(product.description, 100)}}</p>
       <div class="row no-gutters mt-3">
         <div class="col-6">
-          <strong href="#" class="card-link">{{product.currency_code == 'USD' ? '$' : '€'}}{{product.price}}</strong>
+          <span class="uk-label uk-label-success">
+            <strong>{{product.currency_code == 'USD' ? '$' : '€'}}{{product.price}}</strong>
+          </span>
         </div>
         <div class="col-6 text-right">
           <ul class="uk-iconnav uk-float-right">
@@ -27,4 +29,7 @@
       </div>
     </div>
   </div>
+</div>
+<div class="uk-alert-danger" uk-alert *ngIf="error">
+  <p><strong>Error {{error.status}}</strong> {{error.statusText}}</p>
 </div>

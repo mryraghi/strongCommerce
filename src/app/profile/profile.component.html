@@ -1,14 +1,45 @@
 <div *ngIf="user" style="background-color: #f8f8f8;">
   <div class="uk-light uk-background-secondary uk-padding">
     <h3 class="uk-heading-line"><span>Welcome {{user.nickname}}</span></h3>
-    <div class="row">
-      <div class="col-6">
 
+    <fieldset class="uk-fieldset">
+      <div class="row">
+        <div class="col-4 pr-3">
+          <div class="uk-margin">
+            <label class="uk-form-label" for="first_name">First Name</label>
+            <div class="uk-form-controls">
+              <input class="uk-input" id="first_name" type="text" [(ngModel)]="info.first_name"
+                     placeholder="First name">
+            </div>
+          </div>
+          <div class="uk-margin">
+            <label class="uk-form-label" for="last_name">Last Name</label>
+            <div class="uk-form-controls">
+              <input class="uk-input" id="last_name" type="text" [(ngModel)]="info.last_name" placeholder="First name">
+            </div>
+          </div>
+        </div>
+        <div class="col-4">
+          <h3>Address</h3>
+          <div class="uk-margin">
+            <label class="uk-form-label" for="address_street">Street</label>
+            <div class="uk-form-controls">
+              <input class="uk-input" id="address_street" type="text" [(ngModel)]="info.address_street"
+                     placeholder="First name">
+            </div>
+          </div>
+          <div class="uk-margin">
+            <label class="uk-form-label" for="address_country">Country</label>
+            <div class="uk-form-controls">
+              <input class="uk-input" id="address_country" type="text" [(ngModel)]="info.address_country"
+                     placeholder="First name">
+            </div>
+          </div>
+          <hr>
+          <button class="uk-button uk-button-default" (click)="addToUserMetadata()">Update profile</button>
+        </div>
       </div>
-      <div class="col-6">
-
-      </div>
-    </div>
+    </fieldset>
   </div>
   <div class="uk-dark uk-background-muted uk-padding">
     <ul class="uk-subnav uk-subnav-pill" uk-switcher="animation: uk-animation-fade">
@@ -35,17 +66,18 @@
           <tr *ngFor="let item of cart">
             <td class="uk-table-shrink"><img style="border-radius: 50%" src="{{item.MainImage.url_75x75}}" width="35"
                                              height="35"></td>
-            <td class="uk-table-expand">{{item.title}}</td>
+            <td class="uk-table-expand">{{unescape(item.title)}}</td>
             <td class="uk-table-shrink">{{item.views}}</td>
             <td class="uk-table-shrink">{{item.when_made}}</td>
             <td class="uk-table-shrink">
               <div class="uk-margin">
-                <select class="uk-select uk-form-small">
-                  <option *ngFor="let n of newArray(item.quantity); let i=index">{{i + 1}}</option>
+                <select class="uk-select uk-form-small" #quantity (change)="onChange(item.listing_id, quantity.value)"
+                        [value]="item.quantity_to_buy || 1">
+                  <option *ngFor="let n of newArray(item.quantity); let i=index" [value]="i + 1">{{i + 1}}</option>
                 </select>
               </div>
             </td>
-            <td class="uk-table-shrink">{{item.price}} {{item.currency_code === 'USD'? '$' : '€'}}</td>
+            <td class="uk-table-shrink">{{item.price * quantity.value}} {{item.currency_code === 'USD'? '$' : '€'}}</td>
             <td class="uk-table-shrink">
               <a uk-icon="icon: close" class="card-link" (click)="removeItem('cart', item.listing_id)"
                  title="Delete item" uk-tooltip></a>
@@ -54,7 +86,7 @@
           </tbody>
         </table>
         <button class="uk-button uk-button-default uk-button-small uk-float-right" href="#modal-checkout" uk-toggle
-                *ngIf="cart.length != 0">
+                *ngIf="cart.length != 0" (click)="calculateTotal()">
           <span uk-icon="icon: credit-card"></span> Checkout
         </button>
 
@@ -67,6 +99,7 @@
               <h2 class="uk-modal-title">Checkout</h2>
             </div>
             <div class="uk-modal-body">
+              <h3>Total: {{total}}</h3>
               <form class="uk-grid-small" uk-grid>
                 <div class="uk-width-1-1">
                   <input class="uk-input" type="text" placeholder="Full name">
@@ -98,7 +131,6 @@
             <th>title</th>
             <th>views</th>
             <th>when_made</th>
-            <th>quantity</th>
             <th>price</th>
             <th></th>
           </tr>
@@ -110,13 +142,6 @@
             <td class="uk-table-expand">{{item.title}}</td>
             <td class="uk-table-shrink">{{item.views}}</td>
             <td class="uk-table-shrink">{{item.when_made}}</td>
-            <td class="uk-table-shrink">
-              <div class="uk-margin">
-                <select class="uk-select uk-form-small">
-                  <option *ngFor="let n of newArray(item.quantity); let i=index">{{i + 1}}</option>
-                </select>
-              </div>
-            </td>
             <td class="uk-table-shrink">{{item.price}} {{item.currency_code === 'USD'? '$' : '€'}}</td>
             <td class="uk-table-shrink">
               <a uk-icon="icon: close" class="card-link" (click)="removeItem('fav', item.listing_id)"

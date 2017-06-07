@@ -1,23 +1,170 @@
-<ul uk-accordion>
-  <li class="uk-open">
-    <h3 class="uk-accordion-title">Item 1</h3>
-    <div class="uk-accordion-content">
-      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
-        magna aliqua.</p>
-    </div>
-  </li>
-  <li>
-    <h3 class="uk-accordion-title">Item 2</h3>
-    <div class="uk-accordion-content">
-      <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-        Duis aute irure dolor reprehenderit.</p>
-    </div>
-  </li>
-  <li>
-    <h3 class="uk-accordion-title">Item 3</h3>
-    <div class="uk-accordion-content">
-      <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-        Excepteur sint occaecat cupidatat proident.</p>
-    </div>
-  </li>
-</ul>
+<div class="uk-light uk-background-secondary uk-padding">
+  <div class="row">
+    <ul class="col-2 uk-nav-default uk-nav-parent-icon" uk-switcher uk-nav="multiple: true"
+        style="padding-right: 25px;">
+      <li class="uk-parent">
+        <a href uk-switcher-item="0">Vulnerabilities</a>
+        <ul class="uk-nav-sub">
+          <li>Code Injection</li>
+          <li>XSS</li>
+          <li>Misconfiguration Issues</li>
+          <li>Sensitive Data Exposure</li>
+          <li>Authentication</li>
+          <li>Session Management</li>
+        </ul>
+      </li>
+      <li class="uk-parent">
+        <a href uk-switcher-item="0">Authentication Rules</a>
+        <ul class="uk-nav-sub">
+          <li>Account Takeover Prevention Via ThisData</li>
+          <li>Account Takeover Detection Via ThisData</li>
+          <li>Multi-factor authentication With Google Authenticator</li>
+        </ul>
+      </li>
+      <li class="uk-parent">
+        <a href uk-switcher-item="1">Authentication Policies</a>
+        <ul class="uk-nav-sub">
+          <li>Password Policy</li>
+          <li>Password History</li>
+          <li>Password Dictionary</li>
+          <li>Personal Data</li>
+        </ul>
+      </li>
+    </ul>
+    <ul class="col-10 uk-switcher uk-margin">
+      <li>
+        <h3 class="uk-heading-line"><span>Authentication</span></h3>
+        <h4><span>Auth0 Overview</span></h4>
+        <p>Auth0 is a service that abstracts how users authenticate to applications.</p>
+        <img src="assets/images/auth0.png">
+
+        <h4><span>Encryption, Password Hashing</span></h4>
+        <p>Auth0 helps prevent critical identity data from falling into the wrong hands. Auth0 never store passwords as
+          clear text - they are always hashed (and salted) securely using bcrypt. Both data at rest and in motion is
+          encrypted - all network communication uses TLS with at least 128-bit AES encryption. The connection uses TLS
+          v1.2, and it is encrypted and authenticated using AES_128_GCM and uses ECDHE_RSA as the key exchange
+          mechanism. Qualsys' SSL Labs <a href="https://www.ssllabs.com/ssltest/analyze.html?d=manage.auth0.com&latest">
+            scored Auth0's SSL implementation as "A+"</a> on their SSL Server test.</p>
+
+        <h4><span>Password Complexity</span></h4>
+        <p>With Auth0 you can enforce five levels of password complexity, as well as custom rules implementing <a
+          href="https://www.owasp.org/index.php/Authentication_Cheat_Sheet#Implement_Proper_Password_Strength_Controls">OWASP
+          recommendations</a> and more.</p>
+
+        <h4><span>Attack Prevention, Mitigation</span></h4>
+        <p>Auth0 services are architected with high-availability and resilience in mind. Auth0 applications have
+          built-in rate limiting and automated blocking features to mitigate advanced denial of service or
+          authentication attacks. Our network infrastructure is protected against volumetric attacks by our cloud
+          providers, in addition to a dedicated DDoS mitigation service.</p>
+
+        <h4><span>Secure Infrastructure</span></h4>
+        <p>Auth0 takes advantage of the industry's most sophisticated, battle-tested infrastructure. We run on hardened
+          Linux hosts with automatic security patching, carefully-configured security groups, segmented VPCs, and
+          role-based access controls, combined with many other advanced protections built into the cloud
+          infrastructure.</p>
+
+        <h3 class="uk-heading-line"><span>Session Management</span></h3>
+        <h4><span>Create session</span></h4>
+        <p>Once the user is logged in, a client-side session is created for them. To do this, the user's
+          <code>id_token</code> that is returned in the Lock <code>authenticated</code> callback parameter
+          is stored in <code>localStorage</code>.
+        </p>
+
+        <h4><span>Check the session</span></h4>
+        <p>Determining whether the user is authenticated on the client side is simply a matter of checking whether they
+          have a JWT in local storage. Since JWT authentication is stateless (no session exists on the server), the
+          presence of a JWT is all that is needed to give the front-end application some indication that the user is
+          authenticated.</p>
+
+        <h4><span>Logout</span></h4>
+        <p>To log a user out, a method that removes their token from localStorage is implemented.</p>
+
+        <h3 class="uk-heading-line"><span>Tokens used by strongCommerce</span></h3>
+        <h4><span>ID Tokens</span></h4>
+        <p>The ID token, usually referred to in Auth0's docs as <code>id_token</code>, is a
+          <a href="https://auth0.com/docs/jwt">JSON Web Token (JWT)</a> that contains user
+          profile information (like the user's name, email, and so forth), represented in the form of claims. These
+          claims are statements about the user, which can be trusted if the consumer of the token can verify its
+          signature.</p>
+      </li>
+
+      <li>
+        <h3 class="uk-heading-line"><span>Account Takeover Prevention Via ThisData</span></h3>
+        <p>This rule is designed to detect phished or compromised user accounts and block attackers from logging in to
+          hacked accounts. Even if the primary user authentication is approved (e.g. correct username and password) it
+          will deny access if the login appears to be highly suspicious.</p>
+        <p>It uses ThisData's anomaly detection algorithms which take into account many behavioural factors
+          including:</p>
+        <ul>
+          <li>Location & Velocity</li>
+          <li>Devices</li>
+          <li>Time of day</li>
+          <li>Tor usage</li>
+          <li>Risky IP addresses</li>
+          <li>and more...</li>
+        </ul>
+
+        <p>This rule uses ThisData's API to get a risk score for the login, and then blocks the login by raising an
+          *UnauthorizedError* error if the risk is very high.</p>
+
+        <h3 class="uk-heading-line"><span>Account Takeover Detection Via ThisData</span></h3>
+        <p>This rule is designed to detect phished or compromised user accounts, and optionally send an email or SMS
+          notification to the user asking "Was This You?". This is similar to the emails we get signing in to Google or
+          Facebook from a new device or location. The users' response can be used to take further action, like shutting
+          down a compromised account.</p>
+        <p>This rule works in the background, and will never stop the users from logging in to the application.</p>
+
+        <h3 class="uk-heading-line"><span>Multi-factor authentication With Google Authenticator</span></h3>
+        <p>Multi-factor authentication (MFA) is a method of computer access control in which a user is granted access
+          only after successfully presenting several separate pieces of evidence to an authentication mechanism –
+          typically at least two of the following categories: knowledge (something they know), possession (something
+          they have), and inherence (something they are).</p>
+        <p>This rule is used to trigger multifactor authentication with Google Authenticator when a condition is
+          met.</p>
+        <p>Upon first login, the user can enroll the device by scanning a QR code. Subsequent logins will ask for the
+          Google Authenticator code.</p>
+
+      </li>
+
+      <li>
+        <h3 class="uk-heading-line" id="password-policy"><span>Password Policy</span></h3>
+        <p>Password strength is an important consideration when using passwords for authentication. A strong password
+          policy will make it difficult, if not improbable, for someone to guess a password through either manual or
+          automated means.</p>
+        <ul>
+          <li>At least 10 characters in length</li>
+          <li>Contain at least 3 of the following 4 types of characters:
+            <ul>
+              <li>Lower case letters (a-z)</li>
+              <li>Upper case letters (A-Z)</li>
+              <li>Numbers (i.e. 0-9)</li>
+              <li>Special characters (e.g. !@#$%^&* )</li>
+            </ul>
+          </li>
+          <li>At most 128 characters</li>
+          <li>Not more than 2 identical characters in a row (e.g., 111 not allowed)</li>
+        </ul>
+
+        <h4 class="uk-heading-line" id="password-history"><span>Password History</span></h4>
+        <p>The system will maintain a password history for each user and prevent the reuse of passwords included in the
+          history.</p>
+
+        <h4 class="uk-heading-line" id="password-dictionary"><span>Password Dictionary</span></h4>
+        <p>Do not allow passwords that are part of the password dictionary. The default dictionary is a list of the
+          10,000
+          most common passwords (click <a
+            href="https://github.com/danielmiessler/SecLists/blob/master/Passwords/10k_most_common.txt"></a> to see the
+          list).</p>
+
+        <h4 class="uk-heading-line" id="personal-data"><span>Personal Data</span></h4>
+        <p>Do not allow passwords that contain any part of the user's personal data. This includes the user's `name`,
+          `username`, `nickname`, `user_metadata.name`, `user_metadata.first`, `user_metadata.last`. The user's `email`
+          or the first part of it, `firstpart@email.com` will also be checked.</p>
+
+        <hr>
+
+      </li>
+    </ul>
+  </div>
+
+</div>

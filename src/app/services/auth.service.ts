@@ -28,6 +28,8 @@ export class AuthService {
     if (this.authenticated) {
       this.setLoggedIn(true);
     }
+
+    setInterval(this.authenticated, 1000);
   }
 
   setLoggedIn(value: boolean) {
@@ -36,14 +38,23 @@ export class AuthService {
     this.loggedIn = value;
   }
 
+  /**
+   * The purpose of this call is to obtain consent from
+   * the user to invoke the API (specified in audience)
+   * and do certain things (specified in scope) on behalf
+   * of the user. Auth0 will authenticate the user and
+   * obtain consent, unless consent has been previously given.
+   */
   login() {
     // Auth0 authorize request
     // Note: nonce is automatically generated: https://auth0.com/docs/libraries/auth0js/v8#using-nonce
     this.auth0.authorize({
       responseType: 'token',
       redirectUri: AUTH_CONFIG.REDIRECT,
+      client_id: AUTH_CONFIG.CLIENT_ID,
       audience: AUTH_CONFIG.AUDIENCE,
-      scope: AUTH_CONFIG.SCOPE
+      scope: AUTH_CONFIG.SCOPE,
+      state: 'test' // used to prevent CSRF
     });
   }
 
@@ -52,8 +63,8 @@ export class AuthService {
     this.auth0.parseHash((err, authResult) => {
       if (authResult && authResult.accessToken) {
         window.location.hash = '';
-        this._getProfile(authResult);
         this.router.navigate(['/profile']);
+        this._getProfile(authResult);
       } else if (err) {
         this.router.navigate(['/']);
         swal({
@@ -82,6 +93,7 @@ export class AuthService {
 
   logout() {
     // Remove tokens and profile and update login status subject
+    localStorage.removeItem('access_token');
     localStorage.removeItem('token');
     localStorage.removeItem('profile');
     this.router.navigate(['/']);

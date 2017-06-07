@@ -1,13 +1,18 @@
 import {Component, OnInit} from "@angular/core";
 import * as moment from "moment";
+import * as _ from "lodash";
 
 import {AUTH_CONFIG} from "../services/auth0-variables";
 import {User} from "../objects/user.object";
 import {APIService} from "../services/api.service";
 import {Product} from "../objects/product.object";
+import {AuthService} from "app/services/auth.service";
+import {ErrorObject} from "app/objects/error.object";
+import {InfoObject} from "app/objects/info.object";
 
 // Avoid name not found warnings
 declare const auth0: any;
+declare const swal: any;
 
 @Component({
   selector: 'app-profile',
@@ -22,33 +27,136 @@ export class ProfileComponent implements OnInit {
 
   user: User;
   logs: any;
-  cart: Product[];
-  fav: Product[];
+  info: InfoObject;
+  cart: Product[] = [];
+  fav: Product[] = [];
+  total = 0;
 
-  constructor(private apiService: APIService) {
+  constructor(private apiService: APIService, private authService: AuthService) {
   }
 
   ngOnInit() {
-    this.apiService.getUser().then((user: User) => {
-      this.cart = user.user_metadata.cart;
-      this.fav = user.user_metadata.fav;
-      delete user.user_metadata.cart;
-      delete user.user_metadata.fav;
-      this.user = user;
-    });
+    console.log(this.info);
+    // get access_token in order to be able to make API requests
+    this.apiService.getToken().subscribe(
+      response => {
+        localStorage.setItem('access_token', response.access_token);
+        // TODO: wanna display time remaining?
 
-    this.apiService.getLogs().then((logs: any) => this.logs = logs);
+        // if access_token has been retrieved then get user info
+        this.apiService.getUser().subscribe(
+          (user: User) => {
+            this.cart = user.user_metadata.cart || [];
+            this.fav = user.user_metadata.fav || [];
+            this.info = user.user_metadata.info || new InfoObject();
+            delete user.user_metadata.cart;
+            delete user.user_metadata.fav;
+            delete user.user_metadata.info;
+            this.user = user;
+
+            // once authenticated, get logs
+            this.apiService.getLogs().subscribe(
+              logs => this.logs = logs,
+              err => {
+                const error: ErrorObject = err.json();
+                swal({
+                  title: 'Error',
+                  text: `${error.statusCode} ${error.error} - ${error.message}`,
+                  type: 'error',
+                  confirmButtonText: 'Reload page'
+                }).then(() => {
+                  setTimeout(() => {
+                    window.location.reload();
+                  }, 1000);
+                });
+              }
+            );
+          },
+          err => {
+            const error: ErrorObject = err.json();
+            swal({
+              title: `${error.error} [${error.statusCode}]`,
+              text: error.message,
+              type: 'error',
+              confirmButtonText: 'Reload page'
+            }).then(() => {
+              setTimeout(() => {
+                window.location.reload();
+              }, 1000);
+            });
+          }
+        );
+      },
+      err => {
+        const error: ErrorObject = err.json();
+        swal({
+          title: `${error.error} [${error.statusCode}]`,
+          text: error.message,
+          type: 'error',
+          showCancelButton: true,
+          confirmButtonText: 'Reload page',
+          cancelButtonText: 'Logout'
+        }).then(() => {
+          setTimeout(() => {
+            window.location.reload();
+          }, 1000);
+        }, (dismiss) => {
+          if (dismiss === 'cancel') {
+            this.authService.logout();
+          }
+        });
+      }
+    );
   }
 
   removeItem(type: 'cart' | 'fav', listing_id: number) {
     const product: Product = new Product(listing_id);
 
-    this.apiService.updateUserMetadata(type, 'remove', product).then(
-      (user: User) => {
-        this.fav = user.user_metadata.fav;
-        this.cart = user.user_metadata.cart;
-      }
-    );
+    this.apiService.updateUserMetadata(type, 'remove', product)
+      .subscribe(
+        (user: User) => {
+          this.fav = user.user_metadata.fav;
+          this.cart = user.user_metadata.cart;
+        },
+        err => {
+          const error: ErrorObject = err.json();
+          swal({
+            title: 'Error',
+            text: `${error.statusCode} ${error.error} - ${error.message}`,
+            type: 'error',
+            confirmButtonText: 'Reload page'
+          }).then(() => {
+            setTimeout(() => {
+              window.location.reload();
+            }, 1000);
+          });
+        }
+      );
+  }
+
+  addToUserMetadata() {
+    console.log(this.info);
+    this.apiService.updateUserInfoMetadata(this.info)
+      .subscribe(
+        (user: User) => {
+          this.fav = user.user_metadata.fav || [];
+          this.cart = user.user_metadata.cart || [];
+          this.info = user.user_metadata.info || new InfoObject();
+        },
+        err => {
+          const error: ErrorObject = err.json();
+          swal({
+            title: 'Error',
+            text: `${error.statusCode} ${error.error} - ${error.message}`,
+            type: 'error',
+            confirmButtonText: 'Reload page'
+          }).then(() => {
+            setTimeout(() => {
+              window.location.reload();
+            }, 1000);
+          });
+        }
+      );
   }
 
   parseDate(date: Date) {
@@ -61,6 +169,26 @@ export class ProfileComponent implements OnInit {
 
   newArray(number: number) {
     return Array(number).fill(1);
+  }
+
+  unescape(string: string) {
+    return _.unescape(string);
+  }
+
+  onChange(listing_id: number, quantity_to_buy: number) {
+    _.forEach(this.cart, (item: Product) => {
+      if (_.isEqual(item.listing_id, listing_id)) {
+        item.quantity_to_buy = _.toNumber(quantity_to_buy);
+      }
+    });
+  }
+
+  calculateTotal() {
+    let total = 0;
+    _.forEach(this.cart, (item: Product) => {
+      total += (_.toNumber(item.price) * (item.quantity_to_buy || 1));
+    });
+    this.total = total;
   }
 
 }

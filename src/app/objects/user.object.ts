@@ -1,4 +1,5 @@
 import {Product} from "../objects/product.object";
+import {InfoObject} from "../objects/info.object";
 
 export class User {
   name: string;
@@ -11,6 +12,7 @@ export class User {
   user_metadata: {
     fav: Product[],
     cart: Product[]
+    info: InfoObject
   };
 
   constructor(user: User) {

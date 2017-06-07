@@ -1,4 +1,4 @@
-<nav class="navbar navbar-toggleable-md navbar-light bg-faded">
+<nav class="navbar navbar-toggleable-md navbar-light bg-faded" uk-sticky>
   <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarText"
           aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
@@ -10,21 +10,21 @@
         <a class="nav-link" href>Products</a>
       </li>
       <li class="nav-item" routerLink="/security" routerLinkActive="active">
-        <a class="nav-link">Security</a>
+        <a class="nav-link" href>Security</a>
       </li>
     </ul>
     <div class="navbar-text">
       <ul class="navbar-nav mr-auto">
-        <li class="nav-item active mr-4">
+        <li class="nav-item active mr-4" *ngIf="authService.authenticated">
           <div class="uk-inline">
             <button class="uk-button uk-button-text" type="button"><span uk-icon="icon: cart"></span>
             </button>
             <div uk-dropdown="mode: hover">
               <ul class="uk-nav uk-dropdown-nav">
                 <li class="uk-nav-header">Cart</li>
-                <div *ngIf="!isCartEmpty() && authService.authenticated">
+                <div *ngIf="!isCartEmpty()">
                   <li class="cart-product" *ngFor="let product of cart">
-                    <a href class="uk-text-truncate" style="max-width: 300px;">{{product.title}}</a></li>
+                    <a href class="uk-text-truncate" style="max-width: 300px;">{{unescape(product.title)}}</a></li>
                   <li class="uk-nav-divider"></li>
                   <li>
                     <a class="uk-button uk-button-default uk-button-small uk-float-right" type="button" href="/profile">Checkout </a>
@@ -37,14 +37,16 @@
         </li>
         <li class="nav-item mr-4">
           <a class="uk-button uk-button-text" *ngIf="!authService.authenticated" (click)="authService.login()">
-            <span uk-icon="icon: sign-in"></span>
+            <span uk-icon="icon: sign-in"></span> Login
           </a>
           <a class="uk-button uk-button-text" *ngIf="authService.authenticated" (click)=authService.logout()>
-            <span uk-icon="icon: sign-out"></span>
+            <span uk-icon="icon: sign-out"></span> Logout
           </a>
         </li>
         <li class="nav-item" routerLink="/profile" *ngIf="authService.authenticated" routerLinkActive="active">
-          <span uk-icon="icon: user"></span>
+          <a class="uk-button uk-button-text">
+            <span uk-icon="icon: user"></span> Profile
+          </a>
         </li>
       </ul>
     </div>
