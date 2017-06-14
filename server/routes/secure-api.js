@@ -10,12 +10,9 @@ const CLIENT_ID = 'I33YIQTMcuukrwaT6CrNPOkWOWCKcGPz';
 const CLIENT_SECRET = 'tcwbIgQ5xBOXIDlspX3qge5pE-JXFlDg70EC3oWVv534e2aCNyBFQFkBeawsD5Fa';
 const AUDIENCE = 'https://rbellon.eu.auth0.com/api/v2/';
 const GRANT_TYPE = 'client_credentials';
-const CLIENT_DOMAIN = 'rbellon.eu.auth0.com';
-const REDIRECT = 'http://localhost:3000/callback';
-const SCOPE = 'openid';
 
 // Connection URL
-let url = 'mongodb://romeo:rad3eDru9a@207.154.238.238:27017/admin';
+// let url = 'mongodb://romeo:rad3eDru9a@207.154.238.238:27017/admin';
 let db = null;
 let users = null;
 
