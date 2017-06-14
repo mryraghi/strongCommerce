@@ -1,35 +1,46 @@
-<div id="columns" *ngIf="!error">
-  <div class="card" *ngFor="let product of products">
-    <img class="card-img-top" src="{{product.MainImage.url_fullxfull}}">
-    <div class="card-block">
-      <h3 class="card-title">{{transform(product.title, 20)}}</h3>
-      <p class="card-text">{{transform(product.description, 100)}}</p>
-      <div class="row no-gutters mt-3">
-        <div class="col-6">
+<div *ngIf="loaded">
+  <div id="columns" *ngIf="!error">
+    <div *ngFor="let product of products">
+      <div class="card" *ngIf="product.MainImage">
+        <img class="card-img-top" src="{{product.MainImage.url_fullxfull}}">
+        <div class="card-block">
+          <h3 class="card-title">{{transform(product.title, 20)}}</h3>
+          <p class="card-text">{{transform(product.description, 100)}}</p>
+          <div class="row no-gutters mt-3">
+            <div class="col-6">
           <span class="uk-label uk-label-success">
             <strong>{{product.currency_code == 'USD' ? '$' : '€'}}{{product.price}}</strong>
           </span>
+            </div>
+            <div class="col-6 text-right">
+              <ul class="uk-iconnav uk-float-right">
+                <li><a (click)="addToUserMetadata('cart', product.listing_id)" class="card-link" uk-icon="icon: cart"
+                       title="Add to cart" uk-tooltip></a>
+                </li>
+                <li><a (click)="addToUserMetadata('fav', product.listing_id)" class="card-link" uk-icon="icon: heart"
+                       title="Add to favourites" uk-tooltip></a>
+                </li>
+              </ul>
+            </div>
+          </div>
         </div>
-        <div class="col-6 text-right">
-          <ul class="uk-iconnav uk-float-right">
-            <li><a (click)="addToUserMetadata('cart', product.listing_id)" class="card-link" uk-icon="icon: cart"
-                   title="Add to cart" uk-tooltip></a>
-            </li>
-            <li><a (click)="addToUserMetadata('fav', product.listing_id)" class="card-link" uk-icon="icon: heart"
-                   title="Add to favourites" uk-tooltip></a>
-            </li>
-          </ul>
+        <hr>
+        <div class="card-block" id="tags">
+          <div *ngFor="let tag of product.tags; let i = index">
+            <span class="tag" *ngIf="i < 10">{{tag}}</span>
+          </div>
         </div>
-      </div>
-    </div>
-    <hr>
-    <div class="card-block" id="tags">
-      <div *ngFor="let tag of product.tags; let i = index">
-        <span class="tag" *ngIf="i < 10">{{tag}}</span>
       </div>
     </div>
   </div>
+  <div class="uk-alert-danger" uk-alert *ngIf="error">
+    <p><strong>Error {{error.status}}</strong> {{error.statusText}}</p>
+  </div>
 </div>
-<div class="uk-alert-danger" uk-alert *ngIf="error">
-  <p><strong>Error {{error.status}}</strong> {{error.statusText}}</p>
+<div *ngIf="!loaded" style="height: 100%">
+  <div class="spinner">
+    <div class="bounce1"></div>
+    <div class="bounce2"></div>
+    <div class="bounce3"></div>
+  </div>
 </div>

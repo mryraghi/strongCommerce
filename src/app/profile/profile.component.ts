@@ -36,12 +36,10 @@ export class ProfileComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log(this.info);
-    // get access_token in order to be able to make API requests
     this.apiService.getToken().subscribe(
       response => {
+        // save access_token
         localStorage.setItem('access_token', response.access_token);
-        // TODO: wanna display time remaining?
 
         // if access_token has been retrieved then get user info
         this.apiService.getUser().subscribe(
@@ -57,55 +55,13 @@ export class ProfileComponent implements OnInit {
             // once authenticated, get logs
             this.apiService.getLogs().subscribe(
               logs => this.logs = logs,
-              err => {
-                const error: ErrorObject = err.json();
-                swal({
-                  title: 'Error',
-                  text: `${error.statusCode} ${error.error} - ${error.message}`,
-                  type: 'error',
-                  confirmButtonText: 'Reload page'
-                }).then(() => {
-                  setTimeout(() => {
-                    window.location.reload();
-                  }, 1000);
-                });
-              }
+              err => this.throwError
             );
           },
-          err => {
-            const error: ErrorObject = err.json();
-            swal({
-              title: `${error.error} [${error.statusCode}]`,
-              text: error.message,
-              type: 'error',
-              confirmButtonText: 'Reload page'
-            }).then(() => {
-              setTimeout(() => {
-                window.location.reload();
-              }, 1000);
-            });
-          }
+          err => this.throwError
         );
       },
-      err => {
-        const error: ErrorObject = err.json();
-        swal({
-          title: `${error.error} [${error.statusCode}]`,
-          text: error.message,
-          type: 'error',
-          showCancelButton: true,
-          confirmButtonText: 'Reload page',
-          cancelButtonText: 'Logout'
-        }).then(() => {
-          setTimeout(() => {
-            window.location.reload();
-          }, 1000);
-        }, (dismiss) => {
-          if (dismiss === 'cancel') {
-            this.authService.logout();
-          }
-        });
-      }
+      err => this.throwError
     );
   }
 
@@ -118,19 +74,7 @@ export class ProfileComponent implements OnInit {
           this.fav = user.user_metadata.fav;
           this.cart = user.user_metadata.cart;
         },
-        err => {
-          const error: ErrorObject = err.json();
-          swal({
-            title: 'Error',
-            text: `${error.statusCode} ${error.error} - ${error.message}`,
-            type: 'error',
-            confirmButtonText: 'Reload page'
-          }).then(() => {
-            setTimeout(() => {
-              window.location.reload();
-            }, 1000);
-          });
-        }
+        err => this.throwError
       );
   }
 
@@ -143,19 +87,7 @@ export class ProfileComponent implements OnInit {
           this.cart = user.user_metadata.cart || [];
           this.info = user.user_metadata.info || new InfoObject();
         },
-        err => {
-          const error: ErrorObject = err.json();
-          swal({
-            title: 'Error',
-            text: `${error.statusCode} ${error.error} - ${error.message}`,
-            type: 'error',
-            confirmButtonText: 'Reload page'
-          }).then(() => {
-            setTimeout(() => {
-              window.location.reload();
-            }, 1000);
-          });
-        }
+        err => this.throwError
       );
   }
 
@@ -173,6 +105,26 @@ export class ProfileComponent implements OnInit {
 
   unescape(string: string) {
     return _.unescape(string);
+  }
+
+  private throwError(err) {
+    const error: ErrorObject = err.json();
+    swal({
+      title: `${error.error} [${error.statusCode}]`,
+      text: error.message,
+      type: 'error',
+      showCancelButton: true,
+      confirmButtonText: 'Reload page',
+      cancelButtonText: 'Logout'
+    }).then(() => {
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+    }, (dismiss) => {
+      if (dismiss === 'cancel') {
+        this.authService.logout();
+      }
+    });
   }
 
   onChange(listing_id: number, quantity_to_buy: number) {

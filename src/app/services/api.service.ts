@@ -17,6 +17,7 @@ export class APIService {
   cart: Product[] = [];
   fav: Product[] = [];
   info: InfoObject;
+  init = false;
 
   static handleError(error: any): Promise<any> {
     return Promise.reject(error);
@@ -48,28 +49,18 @@ export class APIService {
    */
   getToken() {
     const token = localStorage.getItem('token');
-    const headers: Headers = new Headers();
-    headers.append('content-type', 'application/json');
-    headers.append('authorization', `Bearer ${token}`);
 
     return this.http.get('/secure/authenticate', {
-      headers: headers
+      headers: this.getHeaders('token')
     }).map(res => res.json());
   }
 
   getUser() {
     const user: User = JSON.parse(localStorage.getItem('profile'));
 
-    const headers: Headers = new Headers();
-    headers.append('content-type', 'application/json');
-    headers.append('Authorization', `Bearer ${localStorage.getItem('access_token')}`);
-
-    const params: URLSearchParams = new URLSearchParams();
-    params.set('audience', AUTH_CONFIG.AUDIENCE);
-
-    return this.http.get(`https://rbellon.eu.auth0.com/api/v2/users/${user.sub}`, {
-      headers: headers,
-      search: params
+    return this.http.get(`https://rbellon.eu.auth0.com/api/v2/users/${user.sub}#asd`, {
+      headers: this.getHeaders(),
+      search: this.getParams()
     }).map(res => res.json())
       .do(res => {
           this.cart = res.user_metadata.cart;
@@ -82,14 +73,7 @@ export class APIService {
   updateUserInfoMetadata(info: InfoObject) {
     this.info = info;
 
-    const headers: Headers = new Headers();
-    headers.append('content-type', 'application/json');
-    headers.append('Authorization', `Bearer ${localStorage.getItem('access_token')}`);
-
     const user: User = JSON.parse(localStorage.getItem('profile'));
-
-    const params: URLSearchParams = new URLSearchParams();
-    params.set('audience', AUTH_CONFIG.AUDIENCE);
 
     return this.http.patch(`https://rbellon.eu.auth0.com/api/v2/users/${user.sub}`, JSON.stringify({
       'user_metadata': {
@@ -98,43 +82,46 @@ export class APIService {
         'info': info
       }
     }), {
-      headers: headers,
-      search: params
+      headers: this.getHeaders(),
+      search: this.getParams()
     }).map(res => res.json());
   }
 
+  /**
+   * Update logged user's metadata on Auth0
+   * @param type cart/fav
+   * @param action add/remove
+   * @param product The product the user wants to save
+   * @returns {Observable<>}
+   */
   updateUserMetadata(type: 'cart' | 'fav', action: 'add' | 'remove', product: Product) {
     switch (action) {
       case 'add':
         let found = false;
+
+        // check whether the product is already on the local list
         _.forEach(this[type], (item) => {
           if (_.isEqual(item.listing_id, product.listing_id)) {
             found = true;
           }
         });
+
+        // if not found then add it
         if (!found) {
           this[type].push(product);
         }
         break;
 
       case 'remove':
+
+        // remove product from local list if present
         _.remove(this[type], (item: Product) => {
           return _.isEqual(item.listing_id, product.listing_id);
         });
         break;
-
-      default:
-        break;
     }
 
-    const headers: Headers = new Headers();
-    headers.append('content-type', 'application/json');
-    headers.append('Authorization', `Bearer ${localStorage.getItem('access_token')}`);
-
     const user: User = JSON.parse(localStorage.getItem('profile'));
-
-    const params: URLSearchParams = new URLSearchParams();
-    params.set('audience', AUTH_CONFIG.AUDIENCE);
 
     return this.http.patch(`https://rbellon.eu.auth0.com/api/v2/users/${user.sub}`, JSON.stringify({
       'user_metadata': {
@@ -142,8 +129,8 @@ export class APIService {
         'cart': this.cart
       }
     }), {
-      headers: headers,
-      search: params
+      headers: this.getHeaders(),
+      search: this.getParams()
     }).map(res => res.json())
       .do(
         (newUser: User) => {
@@ -160,16 +147,9 @@ export class APIService {
   getLogs() {
     const user: User = JSON.parse(localStorage.getItem('profile'));
 
-    const headers: Headers = new Headers();
-    headers.append('content-type', 'application/json');
-    headers.append('Authorization', `Bearer ${localStorage.getItem('access_token')}`);
-
-    const params: URLSearchParams = new URLSearchParams();
-    params.set('audience', AUTH_CONFIG.AUDIENCE);
-
     return this.http.get(`https://rbellon.eu.auth0.com/api/v2/users/${user.sub}/logs`, {
-      headers: headers,
-      search: params
+      headers: this.getHeaders(),
+      search: this.getParams(),
     }).map(res => res.json());
   }
 
@@ -187,6 +167,38 @@ export class APIService {
       .toPromise()
       .then(response => response.json() as Product)
       .catch(APIService.handleError);
+  }
+
+  getLocalCart() {
+    if (!this.init) {
+      this.getUser().subscribe(
+        res => {
+          return this.cart || [];
+        },
+        err => {
+          return [];
+        }
+      );
+      this.init = true;
+    }
+
+    return this.cart || [];
+  }
+
+  private getHeaders(type?: 'token' | 'access_token') {
+    const token = type || 'access_token';
+    const headers: Headers = new Headers();
+    headers.append('content-type', 'application/json');
+    headers.append('Authorization', `Bearer ${localStorage.getItem(token)}`);
+
+    return headers;
+  }
+
+  private getParams() {
+    const params: URLSearchParams = new URLSearchParams();
+    params.set('audience', AUTH_CONFIG.AUDIENCE);
+
+    return params;
   }
 
   // Connect to MongoDB
@@ -211,12 +223,5 @@ export class APIService {
     return this.http.get(`/secure/api/close-db`, {
       headers: headers
     }).map(res => res.json());
-  }
-
-  getLocalCart() {
-    if (!this.authService.authenticated) {
-      this.getUser();
-    }
-    return this.cart || [];
   }
 }

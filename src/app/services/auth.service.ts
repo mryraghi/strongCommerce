@@ -4,8 +4,10 @@ import {Router} from "@angular/router";
 import {BehaviorSubject} from "rxjs/BehaviorSubject";
 import "rxjs/add/operator/filter";
 import {default as swal} from "sweetalert2";
+import {Headers, Http} from "@angular/http";
 
 import {AUTH_CONFIG} from "../services/auth0-variables";
+import {ErrorObject} from "../objects/error.object";
 
 // Avoid name not found warnings
 declare const auth0: any;
@@ -23,7 +25,8 @@ export class AuthService {
   loggedIn: boolean;
   loggedIn$ = new BehaviorSubject<boolean>(this.loggedIn);
 
-  constructor(public router: Router) {
+  constructor(public router: Router, public http: Http) {
+
     // If authenticated, set local profile property and update login status subject
     if (this.authenticated) {
       this.setLoggedIn(true);
@@ -58,6 +61,9 @@ export class AuthService {
     });
   }
 
+  /**
+   * Parse and handle hash received after a successful authentication
+   */
   handleAuth() {
     // When Auth0 hash parsed, get profile
     this.auth0.parseHash((err, authResult) => {
@@ -77,6 +83,11 @@ export class AuthService {
     });
   }
 
+  /**
+   * Retrieve user's profile after successful authentication
+   * @param authResult
+   * @private
+   */
   private _getProfile(authResult) {
     // Use access token to retrieve user's profile and set session
     this.auth0.client.userInfo(authResult.accessToken, (err, profile) => {
@@ -84,13 +95,66 @@ export class AuthService {
     });
   }
 
+  /**
+   * Save authentication and profile tokens into localStorage
+   * @param authResult
+   * @param profile
+   * @private
+   */
   private _setSession(authResult, profile) {
     // Save session data and update login status subject
     localStorage.setItem('token', authResult.accessToken);
     localStorage.setItem('profile', JSON.stringify(profile));
     this.setLoggedIn(true);
+
+    this._getAccessToken();
   }
 
+  /**
+   * Once authenticated retrieve access_token needed to make authorized requests
+   * @private
+   */
+  private _getAccessToken() {
+    // equal to apiService.getToken()
+    // had to copy because otherwise there's a circular dependency
+
+    // get access_token needed to make authorized API requests
+    const token = localStorage.getItem('token');
+    const headers: Headers = new Headers();
+    headers.append('content-type', 'application/json');
+    headers.append('authorization', `Bearer ${token}`);
+
+    return this.http.get('/secure/authenticate', {
+      headers: headers
+    }).map(res => res.json()).subscribe(
+      response => {
+        localStorage.setItem('access_token', response.access_token);
+      },
+      err => {
+        const error: ErrorObject = err.json();
+        swal({
+          title: `${error.error} [${error.statusCode}]`,
+          text: error.message,
+          type: 'error',
+          showCancelButton: true,
+          confirmButtonText: 'Reload page',
+          cancelButtonText: 'Logout'
+        }).then(() => {
+          setTimeout(() => {
+            window.location.reload();
+          }, 1000);
+        }, (dismiss) => {
+          if (dismiss === 'cancel') {
+            this.logout();
+          }
+        });
+      }
+    );
+  }
+
+  /**
+   * Logout by removing every token
+   */
   logout() {
     // Remove tokens and profile and update login status subject
     localStorage.removeItem('access_token');
@@ -100,6 +164,10 @@ export class AuthService {
     this.setLoggedIn(false);
   }
 
+  /**
+   * Check whether the authentication token is expired or invalid
+   * @returns {boolean}
+   */
   get authenticated() {
     // Check if there's an unexpired access token
     return tokenNotExpired('token');

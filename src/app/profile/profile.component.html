@@ -5,6 +5,7 @@
     <fieldset class="uk-fieldset">
       <div class="row">
         <div class="col-4 pr-3">
+          <h3>General Info</h3>
           <div class="uk-margin">
             <label class="uk-form-label" for="first_name">First Name</label>
             <div class="uk-form-controls">
@@ -222,4 +223,12 @@
   <!--</div>-->
 
 </div>
-<p *ngIf="!user">Loading user info...</p>
+<div *ngIf="!user">
+  <div *ngIf="!loaded" style="height: 100%">
+    <div class="spinner">
+      <div class="bounce1"></div>
+      <div class="bounce2"></div>
+      <div class="bounce3"></div>
+    </div>
+  </div>
+</div>

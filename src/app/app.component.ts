@@ -13,9 +13,6 @@ export class AppComponent implements OnInit, OnDestroy {
   cart: Product[] = [];
 
   constructor(public authService: AuthService, private apiService: APIService) {
-    setTimeout(() => {
-      this.apiService.connectDB();
-    }, 2000);
   }
 
   ngOnInit(): void {
@@ -27,8 +24,6 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    console.log('on destroy');
-    this.apiService.closeDB();
   }
 
   isCartEmpty(): boolean {

@@ -1,4 +1,4 @@
-<div class="uk-light uk-background-secondary uk-padding">
+<div class="uk-light uk-background-muted uk-padding">
   <div class="row">
     <ul class="col-2 uk-nav-default uk-nav-parent-icon" uk-switcher uk-nav="multiple: true"
         style="padding-right: 25px;">
@@ -47,7 +47,7 @@
             scored Auth0's SSL implementation as "A+"</a> on their SSL Server test.</p>
 
         <h4><span>Password Complexity</span></h4>
-        <p>With Auth0 you can enforce five levels of password complexity, as well as custom rules implementing <a
+        <p>With Auth0 five levels of password complexity can be enforced, as well as custom rules implementing <a
           href="https://www.owasp.org/index.php/Authentication_Cheat_Sheet#Implement_Proper_Password_Strength_Controls">OWASP
           recommendations</a> and more.</p>
 
@@ -65,9 +65,7 @@
 
         <h3 class="uk-heading-line"><span>Session Management</span></h3>
         <h4><span>Create session</span></h4>
-        <p>Once the user is logged in, a client-side session is created for them. To do this, the user's
-          <code>id_token</code> that is returned in the Lock <code>authenticated</code> callback parameter
-          is stored in <code>localStorage</code>.
+        <p>Once the user is logged in, a client-side session token is created for them and it is stored in <code>localStorage</code>.
         </p>
 
         <h4><span>Check the session</span></h4>

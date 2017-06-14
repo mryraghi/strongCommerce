@@ -28,27 +28,26 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
 // app.use(validator());
-//
-// app.use((req, res, next) => {
-//
-//   // VALIDATION
-//   req.checkBody('urlparam', 'Invalid body params').isEmpty(); // check req.body
-//   req.checkParams('getparam', 'Invalid params').isEmpty(); // check req.params
-//   req.checkQuery('postparam', 'Invalid query params').isEmpty(); // check req.query
-//
-//   // SANITIZATION
-//   // req.sanitizeBody('postparam').toBoolean();
-//   // req.sanitizeParams('urlparam').toBoolean();
-//   // req.sanitizeQuery('getparam').toBoolean();
-//
-//   req.getValidationResult().then((result) => {
-//     if (!result.isEmpty()) {
-//       res.status(400).send('There have been validation errors: ' + util.inspect(result.array()));
-//       return;
-//     }
-//     next()
-//   });
-// })
+
+const validate = (req, res, next) => {
+  // VALIDATION
+  req.checkBody('urlparam', 'Invalid body params').isEmpty(); // check req.body
+  req.checkParams('getparam', 'Invalid params').isEmpty(); // check req.params
+  req.checkQuery('postparam', 'Invalid query params').isEmpty(); // check req.query
+
+  // SANITIZATION
+  req.sanitizeBody('postparam').toBoolean();
+  req.sanitizeParams('urlparam').toBoolean();
+  req.sanitizeQuery('getparam').toBoolean();
+
+  req.getValidationResult().then((result) => {
+    if (!result.isEmpty()) {
+      res.status(400).send('There have been validation errors: ' + util.inspect(result.array()));
+      return;
+    }
+    next()
+  });
+}
 
 app.use(cors());
 
@@ -68,7 +67,7 @@ app.use('/api', api);
  *  1. express-jwt will decode the token and pass the request,
  *    the header and the payload to jwksRsa.expressJwtSecret;
  *  2. jwks-rsa will then download all signing keys from the
- *    JWKS endpoint and see if a one of the signing keys matches
+ *    JWKS endpoint and see if one of the signing keys matches
  *    the kid in the header of the JWT. If none of the signing
  *    keys match the incoming kid, an error will be thrown.
  *    If we have a match, we will pass the right signing key to express-jwt;
@@ -81,7 +80,7 @@ const jwtCheck = jwt({
     cache: true,
     rateLimit: true,
     jwksRequestsPerMinute: 5,
-    jwksUri: 'https://rbellon.eu.auth0.com/.well-known/jwks.json'
+    jwksUri: 'https://rbellon.eu.auth0.com/.well-known/jwks.json' // public key
   }),
   audience: 'https://rbellon.eu.auth0.com/api/v2/',
   issuer: 'https://rbellon.eu.auth0.com/',
@@ -89,56 +88,40 @@ const jwtCheck = jwt({
 });
 
 const checkPermissions = function (req, res, next) {
-  console.log('been here2');
   switch (req.path) {
-    case '/secure/authenticate': {
+    case '/authenticate': {
+      // coded in this way since more custom permissions are allowed to exists
       var permissions = ['openid'];
       for (var i = 0; i < permissions.length; i++) {
         if (req.user.scope.includes(permissions[i])) {
           next();
         } else {
-          res.status(403).send({message: 'Forbidden'});
+          res.status(401).json({
+            statusCode: 401,
+            error: 'Unauthorized',
+            message: 'Insufficient scope'
+          });
         }
       }
       break;
     }
     default:
-      console.log('been here3');
       next()
   }
 }
 
-app.use('/secure', (err, req, res, next) => {
-  console.log('been here1');
-  if (err.name === 'UnauthorizedError') {
-    res.status(401).json({statusCode: 401, error: 'Unauthorized', message: 'Missing or invalid token'});
-  }
-}, jwtCheck, checkPermissions, secure_api);
+/**
+ * When connecting to the /secure endpoint, several checks are done:
+ *  1. token is valid (expiration, intact, ...)
+ *  2. user has necessary scopes (openid), requested when authenticated
+ */
+app.use('/secure', jwtCheck, checkPermissions, secure_api);
 
 /**
  * ENTRY FOLDER
  */
 // Point static path to dist
 app.use(express.static(path.join(__dirname, '../dist')));
-
-// app.use((err, req, res, next) => {
-//   console.log('mtfucking error', err);
-//   if (err.name === 'UnauthorizedError') {
-//     res.status(401).send('invalid token...');
-//   }
-//
-//   // for (const item in req.query) {
-//   //   console.log(req.sanitize(item).escape());
-//   //   req.sanitize(item).escape();
-//   // }
-//   next();
-// });
-
-// app.get('/test', function (req, res) {
-//   let resp = eval('(' + req.query.input + ')');
-//
-//   res.send('Output</br>' + resp);
-// });
 
 // Catch all other routes and return the index file
 app.get('*', (req, res) => {

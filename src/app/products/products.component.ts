@@ -18,6 +18,7 @@ export class ProductsComponent implements OnInit {
   error: ErrorObject;
   cart: Product[] = [];
   fav: Product[] = [];
+  loaded = false;
 
   constructor(private apiService: APIService, public authService: AuthService) {
   }
@@ -25,7 +26,10 @@ export class ProductsComponent implements OnInit {
   ngOnInit() {
     // Retrieve posts from the API
     this.apiService.getAllProducts()
-      .then(products => this.products = products.results)
+      .then(products => {
+        this.products = products.results;
+        this.loaded = true;
+      })
       .catch(error => this.error = new ErrorObject(error.json()));
   }
 
@@ -34,15 +38,23 @@ export class ProductsComponent implements OnInit {
   }
 
   addToUserMetadata(type: 'fav' | 'cart', listing_id: number) {
+    // check whether there's someone authenticated
     if (this.authService.authenticated) {
+
+      // get the selected product's details
       this.apiService.getOneProduct(listing_id)
         .then(newProduct => {
+
+          // copy product to object
           const product: Product = new Product();
           product.copyProduct(newProduct.results[0]);
 
+          // update user metadata on Auth0
           this.apiService.updateUserMetadata(type, 'add', product)
             .subscribe(
               (user: User) => {
+
+                // save new complete user's metadata
                 this.fav = user.user_metadata.fav;
                 this.cart = user.user_metadata.cart;
               },
@@ -62,7 +74,6 @@ export class ProductsComponent implements OnInit {
             );
         });
     } else {
-      swal('strongCommerce', 'You must be logged in!', 'warning');
       swal({
         title: 'strongCommerce',
         text: 'You must be logged in!',

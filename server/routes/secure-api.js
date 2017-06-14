@@ -62,14 +62,11 @@ router.get('/authenticate', (req, res) => {
     grant_type: GRANT_TYPE,
     client_id: CLIENT_ID,
     client_secret: CLIENT_SECRET
-  })
-    .then(response => {
-      res.status(200).json(response.data);
-    })
-    .catch(error => {
-      res.status(500).send(error)
-    });
-
+  }).then(response => {
+    res.status(200).json(response.data);
+  }).catch(error => {
+    res.status(500).send(error)
+  });
 });
 
 router.post('/connect', (req, res) => {
